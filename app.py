@@ -1,33 +1,36 @@
-from flask import Flask, render_template, request
+import re
 
-app = Flask(__name__)
+def is_valid_url(url):
+    pattern = re.compile(
+        r'^(https?:\/\/)?'  # http or https
+        r'([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,})'  # domain
+    )
+    return re.match(pattern, url)
 
 def check_url(url):
+    # Step 1: Check valid URL
+    if not is_valid_url(url):
+        return "❌ Invalid URL"
+
     score = 0
 
+    # Rule 1: HTTPS check
     if "https" not in url:
         score += 1
 
+    # Rule 2: Suspicious words
     suspicious_words = ["login", "verify", "bank", "free", "win"]
     for word in suspicious_words:
         if word in url:
             score += 1
 
+    # Rule 3: Length check
     if len(url) > 50:
         score += 1
 
+    # Final result
     if score >= 2:
         return "⚠️ Suspicious URL"
     else:
         return "✅ Safe URL"
 
-@app.route("/", methods=["GET", "POST"])
-def home():
-    result = ""
-    if request.method == "POST":
-        url = request.form["url"]
-        result = check_url(url)
-    return render_template("index.html", result=result)
-
-if __name__ == "__main__":
-    app.run()
