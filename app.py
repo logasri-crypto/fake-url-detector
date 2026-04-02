@@ -1,14 +1,18 @@
-import re
+from urllib.parse import urlparse
 
 def is_valid_url(url):
-    pattern = re.compile(
-        r'^(https?:\/\/)?'  # http or https
-        r'([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,})'  # domain
-    )
-    return re.match(pattern, url)
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except:
+        return False
 
 def check_url(url):
-    # Step 1: Check valid URL
+    # Step 1: Ensure URL has http/https
+    if not url.startswith("http://") and not url.startswith("https://"):
+        return "❌ Invalid URL (must start with http:// or https://)"
+
+    # Step 2: Validate structure
     if not is_valid_url(url):
         return "❌ Invalid URL"
 
@@ -21,7 +25,7 @@ def check_url(url):
     # Rule 2: Suspicious words
     suspicious_words = ["login", "verify", "bank", "free", "win"]
     for word in suspicious_words:
-        if word in url:
+        if word in url.lower():
             score += 1
 
     # Rule 3: Length check
@@ -33,4 +37,7 @@ def check_url(url):
         return "⚠️ Suspicious URL"
     else:
         return "✅ Safe URL"
+
+
+
 
