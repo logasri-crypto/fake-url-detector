@@ -1,50 +1,40 @@
-from flask import Flask, render_template, request
-from urllib.parse import urlparse
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
-app = Flask(__name__)   # ✅ VERY IMPORTANT
+app = Flask(__name__)
+CORS(app)
 
-def is_valid_url(url):
-    try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc])
-    except:
-        return False
+@app.route('/check', methods=['POST'])
+def check():
+    data = request.get_json()
+    url = data.get("url")
 
-def check_url(url):
-    if not url.startswith("http://") and not url.startswith("https://"):
-        return "❌ Invalid URL (must start with http:// or https://)"
+    if not url:
+        return jsonify({"result": "No URL provided"})
 
-    if not is_valid_url(url):
-        return "❌ Invalid URL"
+    # 🚨 Fake checks
+    if "@" in url:
+        return jsonify({"result": "Fake URL (contains @)"})
 
-    score = 0
+    if "192.168" in url or "127.0.0.1" in url:
+        return jsonify({"result": "Suspicious (IP address used)"})
 
-    if "https" not in url:
-        score += 1
+    if url.count('.') > 3:
+        return jsonify({"result": "Fake URL (too many subdomains)"})
 
-    suspicious_words = ["login", "verify", "bank", "free", "win"]
-    for word in suspicious_words:
-        if word in url.lower():
-            score += 1
+    if "login" in url or "verify" in url or "bank" in url:
+        return jsonify({"result": "Suspicious (phishing keyword)"})
 
-    if len(url) > 50:
-        score += 1
-
-    if score >= 2:
-        return "⚠️ Suspicious URL"
+    # ✅ Basic safe check
+    if url.startswith("https://"):
+        return jsonify({"result": "Likely Safe URL"})
     else:
-        return "✅ Safe URL"
-
-@app.route("/", methods=["GET", "POST"])
-def home():
-    result = ""
-    if request.method == "POST":
-        url = request.form["url"]
-        result = check_url(url)
-    return render_template("index.html", result=result)
+        return jsonify({"result": "Not Secure (No HTTPS)"})
 
 if __name__ == "__main__":
     app.run()
+
+
 
 
 
