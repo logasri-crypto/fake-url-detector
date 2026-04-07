@@ -2,15 +2,68 @@
 <html>
 <head>
     <title>Fake URL Detector</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            text-align: center;
+            color: white;
+            margin-top: 100px;
+        }
+
+        .box {
+            background: white;
+            color: black;
+            padding: 30px;
+            border-radius: 15px;
+            width: 350px;
+            margin: auto;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.3);
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
+
 <body>
 
-    <h2>Fake URL Detector</h2>
+    <div class="box">
+        <h2>🔍 Fake URL Detector</h2>
 
-    <input type="text" id="urlInput" placeholder="Enter URL here">
-    <button onclick="checkURL()">Check</button>
+        <input type="text" id="urlInput" placeholder="Enter URL here">
+        <br>
+        <button onclick="checkURL()">Check</button>
 
-    <p id="result"></p>
+        <p id="result"></p>
+    </div>
 
     <script>
         async function checkURL() {
