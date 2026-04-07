@@ -4,6 +4,11 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+# ✅ ADD THIS ROUTE
+@app.route("/")
+def home():
+    return "Fake URL Detector API is running!"
+
 @app.route('/check', methods=['POST'])
 def check():
     data = request.get_json()
@@ -12,7 +17,6 @@ def check():
     if not url:
         return jsonify({"result": "No URL provided"})
 
-    # 🚨 Fake checks
     if "@" in url:
         return jsonify({"result": "Fake URL (contains @)"})
 
@@ -25,7 +29,6 @@ def check():
     if "login" in url or "verify" in url or "bank" in url:
         return jsonify({"result": "Suspicious (phishing keyword)"})
 
-    # ✅ Basic safe check
     if url.startswith("https://"):
         return jsonify({"result": "Likely Safe URL"})
     else:
@@ -33,9 +36,3 @@ def check():
 
 if __name__ == "__main__":
     app.run()
-
-
-
-
-
-
